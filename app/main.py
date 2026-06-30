@@ -9,23 +9,12 @@ from app.interfaces.routes import router
 
 
 def create_app() -> FastAPI:
-    app = FastAPI(title="RA Contract Emulator")
-
-    # =========================================================================
-    # BOOTSTRAP EMULATOR CORE
-    # =========================================================================
+    app = FastAPI(title="RA Contract Emulator", version="0.1.0")
     dataset = load_dataset()
     state = EmulatorState(dataset=dataset)
-
-    engine = EmulatorEngine(
-        state=state,
-        router=EmulatorRouter(ROUTES),
-    )
-
+    engine = EmulatorEngine(state=state, router=EmulatorRouter(ROUTES))
     app.state.engine = engine
-
     app.include_router(router)
-
     return app
 
 

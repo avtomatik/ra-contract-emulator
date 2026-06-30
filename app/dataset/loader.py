@@ -10,7 +10,7 @@ BASE = Path(__file__).resolve().parent / "seeds"
 
 
 def load_json(name: str):
-    with open(BASE / f"{name}.json", "r", encoding="utf-8") as f:
+    with (BASE / f"{name}.json").open("r", encoding="utf-8") as f:
         return json.load(f)
 
 

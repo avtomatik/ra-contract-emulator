@@ -12,34 +12,34 @@ class Route:
 
 
 class EmulatorRouter:
-    def __init__(self, routes: list[Route]):
+    def __init__(self, routes):
         self.routes = routes
 
-    def match(self, method: str, path: str) -> Handler:
+    def match(self, method, path):
         for route in self.routes:
-            if route.method == method and self._match_path(route.path, path):
-                return route.handler
+            params = self._match_path(route.path, path)
+            if route.method == method and params is not None:
+                return route.handler, params
 
-        raise KeyError(f"No route for {method} {path}")
+        raise KeyError(f"No route {method} {path}")
 
-    def _match_path(self, pattern: str, path: str) -> bool:
+    def _match_path(self, pattern, path):
+        p = pattern.split("/")
+        a = path.split("/")
 
-        if pattern == path:
-            return True
+        if len(p) != len(a):
+            return None
 
-        if "{" in pattern:
-            p_parts = pattern.split("/")
-            a_parts = path.split("/")
+        params = {}
 
-            if len(p_parts) != len(a_parts):
-                return False
+        for x, y in zip(p, a):
 
-            for p, a in zip(p_parts, a_parts):
-                if p.startswith("{") and p.endswith("}"):
-                    continue
-                if p != a:
-                    return False
+            if x.startswith("{"):
 
-            return True
+                params[x[1:-1]] = y
 
-        return False
+            elif x != y:
+
+                return None
+
+        return params
