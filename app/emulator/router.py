@@ -33,13 +33,9 @@ class EmulatorRouter:
         params = {}
 
         for x, y in zip(p, a):
-
             if x.startswith("{"):
-
                 params[x[1:-1]] = y
-
             elif x != y:
-
                 return None
 
         return params

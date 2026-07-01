@@ -1,33 +1,36 @@
 import json
-import random
 import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from faker import Faker
 
-fake = Faker()
+fake = Faker("ru_RU")
 
 BASE = Path(__file__).resolve().parent
 
 
 def make_user():
+    first_name = fake.first_name()
+    last_name = fake.last_name()
+    common_name = f"{last_name} {first_name} {fake.middle_name()}"
     return {
         "id": str(uuid.uuid4()),
         "nameAttributes": {
-            "2.5.4.3": fake.name(),
-            "2.5.4.42": fake.first_name(),
-            "2.5.4.4": fake.last_name(),
+            "1.2.643.100.3": fake.snils(),
+            "2.5.4.3": common_name,
+            "2.5.4.42": first_name,
+            "2.5.4.4": last_name,
             "2.5.4.6": "RU",
-            "1.2.643.3.131.1.1": str(random.randint(1000000000, 9999999999)),
+            "1.2.643.3.131.1.1": fake.individuals_inn(),
         },
         "createdWhen": datetime.now(timezone.utc).isoformat(),
-        "distinguishedName": f"CN={fake.name()},O=Example",
+        "distinguishedName": f"CN={common_name},O={fake.company()}",
     }
 
 
 def make_certificate(user):
-    serial = str(random.randint(100000, 999999))
+    serial = fake.hexify(text="^" * 34)
 
     return {
         "id": str(uuid.uuid4()),
