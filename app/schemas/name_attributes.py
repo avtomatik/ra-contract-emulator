@@ -1,27 +1,46 @@
 from typing import Any
 
-from pydantic import ConfigDict, Field
+from pydantic import RootModel
 
-from .base import APIModel
 from .oids import OID
 
 
-class NameAttributes(APIModel):
-    model_config = ConfigDict(extra="allow")
+class NameAttributes(RootModel[dict[str, Any]]):
+    def common_name(self) -> str | None:
+        return self.root.get(OID.CN)
 
-    common_name: str | None = Field(None, validation_alias=OID.CN)
-    surname: str | None = Field(None, validation_alias=OID.SN)
-    given_name: str | None = Field(None, validation_alias=OID.GIVEN_NAME)
-    country: str | None = Field(None, validation_alias=OID.C)
-    locality: str | None = Field(None, validation_alias=OID.L)
-    organization: str | None = Field(None, validation_alias=OID.O)
-    organization_unit: str | None = Field(None, validation_alias=OID.OU)
+    def surname(self) -> str | None:
+        return self.root.get(OID.SN)
 
-    inn: str | None = Field(None, validation_alias=OID.INN)
-    guid: str | None = Field(None, validation_alias=OID.GUID)
-    snils: str | None = Field(None, validation_alias=OID.SNILS)
-    email: str | None = Field(None, validation_alias=OID.EMAIL_PKCS)
-    upn: str | None = Field(None, validation_alias=OID.USER_PRINCIPAL_NAME)
+    def given_name(self) -> str | None:
+        return self.root.get(OID.GIVEN_NAME)
+
+    def country(self) -> str | None:
+        return self.root.get(OID.C)
+
+    def locality(self) -> str | None:
+        return self.root.get(OID.L)
+
+    def organization(self) -> str | None:
+        return self.root.get(OID.O)
+
+    def organization_unit(self) -> str | None:
+        return self.root.get(OID.OU)
+
+    def inn(self) -> str | None:
+        return self.root.get(OID.INN)
+
+    def guid(self) -> str | None:
+        return self.root.get(OID.GUID)
+
+    def snils(self) -> str | None:
+        return self.root.get(OID.SNILS)
+
+    def email(self) -> str | None:
+        return self.root.get(OID.EMAIL_PKCS)
+
+    def upn(self) -> str | None:
+        return self.root.get(OID.USER_PRINCIPAL_NAME)
 
     def raw(self) -> dict[str, Any]:
-        return self.model_extra or {}
+        return self.root

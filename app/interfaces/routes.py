@@ -22,6 +22,7 @@ def get_certificate(request: Request, serial: str):
         {"serial": serial},
     )
 
+
 @router.get("/api/ra/certRequests")
 def list_cert_requests(request: Request):
     engine = get_engine(request)
@@ -32,4 +33,3 @@ def list_cert_requests(request: Request):
 def list_users(request: Request):
     engine = get_engine(request)
     return engine.handle("GET", "/api/ra/users")
-
