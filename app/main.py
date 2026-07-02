@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 
+from app.dataset.ensure import ensure_dataset_exists
 from app.dataset.loader import load_dataset
 from app.emulator.endpoints import ROUTES
 from app.emulator.engine import EmulatorEngine
@@ -9,6 +10,8 @@ from app.interfaces.routes import router
 
 
 def create_app() -> FastAPI:
+    ensure_dataset_exists()
+
     app = FastAPI(title="RA Contract Emulator", version="0.1.0")
     dataset = load_dataset()
     state = EmulatorState(dataset=dataset)

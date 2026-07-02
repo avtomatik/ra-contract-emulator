@@ -1,0 +1,11 @@
+services:
+  emulator:
+    build: .
+    container_name: ra-contract-emulator
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./app/dataset/seeds:/app/app/dataset/seeds
+    environment:
+      - PYTHONUNBUFFERED=1
+    restart: unless-stopped
