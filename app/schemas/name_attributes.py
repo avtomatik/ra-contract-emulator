@@ -24,11 +24,20 @@ class NameAttributes(RootModel[dict[str, Any]]):
     def locality_name(self) -> str | None:
         return self.root.get(OID.L)
 
+    def state_or_province_name(self) -> str | None:
+        return self.root.get(OID.S)
+
+    def street_address(self) -> str | None:
+        return self.root.get(OID.STREET)
+
     def organization_name(self) -> str | None:
         return self.root.get(OID.O)
 
     def organizational_unit_name(self) -> str | None:
         return self.root.get(OID.OU)
+
+    def title(self) -> str | None:
+        return self.root.get(OID.T)
 
     # =========================================================================
     # Russian subject attributes
