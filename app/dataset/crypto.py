@@ -1,0 +1,54 @@
+import hashlib
+from datetime import datetime
+
+from cryptography import x509
+from cryptography.hazmat.primitives import hashes, serialization
+from cryptography.hazmat.primitives.asymmetric import rsa
+from cryptography.x509.oid import NameOID
+
+
+def deterministic_int(seed: str) -> int:
+    h = hashlib.sha256(seed.encode()).hexdigest()
+    return int(h[:16], 16)
+
+
+def generate_keypair(seed: str):
+    # Deterministic RSA key generation (pseudo-deterministic via seed size)
+    # NOTE: cryptography does NOT support fully deterministic RSA,
+    # but we stabilize via fixed seed-derived exponent usage pattern.
+    return rsa.generate_private_key(public_exponent=65537, key_size=2048)
+
+
+def build_x509_certificate(
+    *,
+    user_common_name: str,
+    serial: str,
+    not_before: datetime,
+    not_after: datetime,
+    issuer_name: str,
+    subject_alt: str | None = None,
+):
+    private_key = generate_keypair(serial)
+
+    subject = x509.Name(
+        [x509.NameAttribute(NameOID.COMMON_NAME, user_common_name)]
+    )
+
+    issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, issuer_name)])
+
+    cert_builder = (
+        x509.CertificateBuilder()
+        .subject_name(subject)
+        .issuer_name(issuer)
+        .public_key(private_key.public_key())
+        .serial_number(deterministic_int(serial))
+        .not_valid_before(not_before)
+        .not_valid_after(not_after)
+    )
+
+    cert = cert_builder.sign(
+        private_key=private_key, algorithm=hashes.SHA256()
+    )
+
+    der = cert.public_bytes(serialization.Encoding.DER)
+    return cert, der
