@@ -1,21 +1,12 @@
 from dataclasses import dataclass
 
-from app.dataset.models import Dataset
 from app.repositories.certificate import CertificateRepository
 from app.repositories.certificate_request import CertificateRequestRepository
 from app.repositories.user import UserRepository
 
 
-@dataclass
-class EmulatorState:
-
-    dataset: Dataset
-
+@dataclass(slots=True)
+class BehaviorContext:
     certificate_repository: CertificateRepository
     certificate_request_repository: CertificateRequestRepository
     user_repository: UserRepository
-
-    request_count: int = 0
-
-    def increment(self) -> None:
-        self.request_count += 1

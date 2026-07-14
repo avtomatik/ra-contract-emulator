@@ -28,7 +28,7 @@ uv run python -m app.seed
 This creates JSON seed files in:
 
 ```
-app/dataset/seeds/
+data/seeds/
 ```
 
 ---
@@ -51,7 +51,7 @@ http://localhost:8000
 
 The emulator is split into four main layers:
 
-### 1. Dataset Layer (`app/dataset`)
+### 1. Dataset Layer (`data/seeds`)
 
 * Loads JSON seed data
 * Converts raw JSON into Pydantic models
@@ -132,7 +132,7 @@ Query params:
 #### Get certificate by serial
 
 ```
-GET /api/ra/certificates/serialNumber/{serial}
+GET /api/ra/certificates/{id}
 ```
 
 ---
@@ -160,7 +160,7 @@ Seed data is generated using Faker (`ru_RU` locale).
 Run:
 
 ```bash
-uv run python -m app.dataset.seeds.generate
+uv run python -m app.dataset.generate
 ```
 
 It generates:
@@ -247,14 +247,14 @@ app/
 Always run:
 
 ```bash
-uv run python -m app.dataset.seeds.generate
+uv run python -m app.dataset.generate
 ```
 
 ---
 
 ### Common debugging flow
 
-1. Check dataset JSON in `app/dataset/seeds/`
+1. Check dataset JSON in `data/seeds/`
 2. Validate schema parsing via:
 
    ```python

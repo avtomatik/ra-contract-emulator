@@ -1,5 +1,5 @@
+from app.behaviors.context import BehaviorContext
 from app.emulator.router import EmulatorRouter
-from app.emulator.serializer import serialize
 from app.emulator.state import EmulatorState
 
 
@@ -15,5 +15,10 @@ class EmulatorEngine:
         handler, params = self.router.match(method, path)
         request.update(params)
 
-        result = handler(request, self.state, self.state.dataset)
-        return serialize(result)
+        context = BehaviorContext(
+            certificate_repository=self.state.certificate_repository,
+            certificate_request_repository=self.state.certificate_request_repository,
+            user_repository=self.state.user_repository,
+        )
+
+        return handler(request, context)

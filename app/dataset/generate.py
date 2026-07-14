@@ -7,9 +7,9 @@ from random import Random
 from faker import Faker
 
 from app.config.paths import SEEDS_DIR
-from app.core.enums import Gender
 from app.dataset.crypto import build_x509_certificate
-from app.schemas.oids import OID
+from app.shared.constants.enums import Gender
+from app.shared.constants.oids import OID
 
 fake = Faker("ru_RU")
 
@@ -42,6 +42,8 @@ def make_user(rng: Random):
             OID.C: "RU",
             OID.INN: fake.individuals_inn(),
             OID.SNILS: fake.snils(),
+            OID.T: fake.job(),
+            OID.GUID: fake.numerify(text="#" * 6),
         },
         "createdWhen": datetime.now(timezone.utc).isoformat(),
         "distinguishedName": f"CN={cn},O={fake.company()}",
@@ -75,7 +77,7 @@ def make_certificate(user, request, rng: Random):
         user_common_name = user_common_name[:64]
 
     cert, der = build_x509_certificate(
-        user_common_name=user_common_name,
+        subject_attributes=user["nameAttributes"],
         serial=serial,
         not_before=not_before,
         not_after=not_after,

@@ -1,15 +1,13 @@
 from pydantic import BaseModel, ConfigDict
+from pydantic.alias_generators import to_camel
 
 
-def to_camel(string: str) -> str:
-    parts = string.split("_")
-    return parts[0] + "".join(p.title() for p in parts[1:])
-
-
-class APIModel(BaseModel):
+class DomainModel(BaseModel):
     model_config = ConfigDict(
-        populate_by_name=True,
         extra="ignore",
+        frozen=False,
+        populate_by_name=True,
+        validate_assignment=True,
         from_attributes=True,
         alias_generator=to_camel,
         validate_by_name=True,

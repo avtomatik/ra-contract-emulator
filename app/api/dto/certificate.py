@@ -1,17 +1,16 @@
-import base64
 from datetime import datetime
-from functools import cached_property
+from uuid import UUID
 
-from cryptography import x509
 from pydantic import Field
 
-from .base import APIModel
-from .extension import Extension
-from .name_attributes import NameAttributes
+from app.shared.models.extension import Extension
+from app.shared.models.name_attributes import NameAttributes
+
+from .base import DTO
 
 
-class Certificate(APIModel):
-    id: str
+class CertificateBaseDTO(DTO):
+    id: UUID
     name_attributes: NameAttributes = Field(validation_alias="nameAttributes")
 
     serial_number: str = Field(validation_alias="serialNumber")
@@ -24,12 +23,19 @@ class Certificate(APIModel):
 
     status: str
 
-    cert_request_id: str | None = Field(None, validation_alias="certRequestId")
+
+class CertificateSummaryDTO(CertificateBaseDTO): ...
+
+
+class CertificateDetailDTO(CertificateBaseDTO):
+    cert_request_id: UUID | None = Field(
+        None, validation_alias="certRequestId"
+    )
     subject: str | None = None
     issuer: str | None = None
-    user_id: str | None = Field(None, validation_alias="userId")
+    user_id: UUID | None = Field(None, validation_alias="userId")
 
-    version: int | None = None
+    version: int = 3
 
     public_key: str | None = Field(None, validation_alias="publicKey")
     public_key_parameters: str | None = Field(
@@ -48,7 +54,7 @@ class Certificate(APIModel):
         None, validation_alias="signatureOidDescription"
     )
 
-    raw_certificate: str | None = Field(
+    raw_certificate: bytes | None = Field(
         None, validation_alias="rawCertificate"
     )
 
@@ -58,9 +64,3 @@ class Certificate(APIModel):
     revoked_when: datetime | None = Field(None, validation_alias="revokedWhen")
 
     folder: str | None = None
-
-    @cached_property
-    def x509(self) -> x509.Certificate:
-        return x509.load_der_x509_certificate(
-            base64.b64decode(self.raw_certificate)
-        )

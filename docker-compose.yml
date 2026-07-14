@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./app/dataset/seeds:/app/app/dataset/seeds
+      - ./data/seeds:/app/data/seeds
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped

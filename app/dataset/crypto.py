@@ -4,7 +4,18 @@ from datetime import datetime
 from cryptography import x509
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
-from cryptography.x509.oid import NameOID
+from cryptography.x509.oid import NameOID, ObjectIdentifier
+
+
+def build_subject(name_attributes: dict[str, str]) -> x509.Name:
+    attributes = []
+
+    for oid, value in name_attributes.items():
+        attributes.append(
+            x509.NameAttribute(ObjectIdentifier(str(oid)), value)
+        )
+
+    return x509.Name(attributes)
 
 
 def deterministic_int(seed: str) -> int:
@@ -21,18 +32,15 @@ def generate_keypair(seed: str):
 
 def build_x509_certificate(
     *,
-    user_common_name: str,
+    subject_attributes: dict[str, str],
     serial: str,
     not_before: datetime,
     not_after: datetime,
     issuer_name: str,
-    subject_alt: str | None = None,
 ):
     private_key = generate_keypair(serial)
 
-    subject = x509.Name(
-        [x509.NameAttribute(NameOID.COMMON_NAME, user_common_name)]
-    )
+    subject = build_subject(subject_attributes)
 
     issuer = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, issuer_name)])
 
@@ -51,4 +59,5 @@ def build_x509_certificate(
     )
 
     der = cert.public_bytes(serialization.Encoding.DER)
+
     return cert, der

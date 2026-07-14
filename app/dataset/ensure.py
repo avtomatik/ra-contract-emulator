@@ -8,5 +8,5 @@ def ensure_dataset_exists():
     if missing:
         raise RuntimeError(
             f"Missing seed files: {missing}. "
-            f"Run: python -m app.dataset.seeds.generate"
+            f"Run: python -m app.dataset.generate"
         )
