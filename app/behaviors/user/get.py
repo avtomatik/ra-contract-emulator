@@ -7,4 +7,4 @@ class GetUserBehavior:
     @staticmethod
     def execute(request, state):
         user = state.user_repository.by_id(UUID(request["id"]))
-        return UserPresenter.detail(user)
+        return UserPresenter.summary(user)

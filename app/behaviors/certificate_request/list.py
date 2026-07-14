@@ -1,4 +1,5 @@
-from app.api.presenters.pagination import PaginationPresenter
+from app.api.dto.pagination import PageResult
+from app.api.presenters.certificate_request import CertificateRequestPresenter
 from app.emulator.paginator import Paginator
 
 
@@ -11,4 +12,7 @@ class ListCertificateRequestsBehavior:
             page_token=request.get("pageToken"),
             endpoint="/api/ra/certRequests",
         )
-        return PaginationPresenter.present(page.items, page.links)
+        return PageResult(
+            items=CertificateRequestPresenter.summaries(page.items),
+            links=page.links,
+        )
