@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ra-contract-emulator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ra-contract-emulator
+  template:
+    metadata:
+      labels:
+        app: ra-contract-emulator
+    spec:
+      containers:
+        - name: emulator
+          image: ra-contract-emulator:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - name: seeds
+              mountPath: /app/data/seeds
+      volumes:
+        - name: seeds
+          hostPath:
+            path: ~/dev/ra-contract-emulator/data/seeds
+            type: Directory

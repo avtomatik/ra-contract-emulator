@@ -1,6 +1,8 @@
 services:
   emulator:
-    build: .
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
     container_name: ra-contract-emulator
     ports:
       - "8000:8000"
@@ -9,3 +11,9 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
     restart: unless-stopped
+    networks:
+      - ra-network
+
+networks:
+  ra-network:
+    name: ra-network
